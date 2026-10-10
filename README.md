@@ -15,6 +15,23 @@ App: http://localhost:3000 · API docs: http://localhost:8080/swagger-ui.html
 Without an LLM key everything still works: intent parsing uses rules and policy answers are extractive quotes with sources.
 For a fully offline start (no embedding model download) set `SHOPSMART_EMBEDDINGS=hash` and `SPRING_AI_MODEL_EMBEDDING=none`.
 
+## Deploy a free demo to Render
+
+The root `render.yaml` defines a Render Blueprint with a static React frontend, Docker-based Spring Boot API,
+and PostgreSQL 16 database. To deploy it:
+
+1. Push this project to a GitHub repository. Keep `.env` out of Git; add secrets only in the Render dashboard.
+2. In Render, choose **New → Blueprint**, connect the repository, and apply the `render.yaml` Blueprint.
+3. Wait for the database and API health check to pass, then open the `shopsmart-web` static-site URL.
+4. To enable model-generated responses, set `OPENAI_API_KEY` (and, if needed, `OPENAI_BASE_URL` / `OPENAI_MODEL`)
+   in the `shopsmart-api` service's environment settings. The assistant otherwise uses its deterministic and
+   extractive fallbacks.
+5. If you add a custom frontend domain, update `CORS_ORIGINS` on `shopsmart-api` to that exact origin and redeploy.
+
+This free configuration is for evaluation, not production: Render's free PostgreSQL database expires after
+30 days, free web services can sleep, and uploads stored under `/tmp` are ephemeral. Do not put important user
+or business data in this demo. Use a paid persistent database and persistent storage before production use.
+
 ## Run locally
 ```bash
 docker compose up db                       # Postgres + pgvector

@@ -14,7 +14,11 @@ export const tokenStore = {
   },
 }
 
-export const api = axios.create({ baseURL: '/api' })
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+  ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/api`
+  : '/api'
+
+export const api = axios.create({ baseURL: apiBaseUrl })
 
 api.interceptors.request.use((config) => {
   const t = tokenStore.get()
@@ -32,7 +36,7 @@ api.interceptors.response.use(
         && !original.url?.includes('/auth/')) {
       original._retry = true
       try {
-        refreshing = refreshing || axios.post('/api/auth/refresh', { refreshToken: tokens.refreshToken })
+        refreshing = refreshing || axios.post(`${apiBaseUrl}/auth/refresh`, { refreshToken: tokens.refreshToken })
         const { data } = await refreshing
         tokenStore.set({ accessToken: data.accessToken, refreshToken: data.refreshToken })
         return api(original)

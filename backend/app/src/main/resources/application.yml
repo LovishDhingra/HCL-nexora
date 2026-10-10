@@ -2,7 +2,7 @@ spring:
   application:
     name: shopsmart-ai
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/shopsmart}
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:shopsmart}}
     username: ${DB_USER:shopsmart}
     password: ${DB_PASSWORD:shopsmart}
   flyway:
@@ -35,7 +35,7 @@ spring:
       max-attempts: 2
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   error:
     include-message: never
 
